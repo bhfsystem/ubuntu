@@ -43,7 +43,7 @@ awesome        ${BLOCK_PATH}/awesome        git@github.com:imma/awesome        3
 digitalocean   ${BLOCK_PATH}/digitalocean   git@github.com:imma/digitalocean   f0fd930f439232af0a3c804623a7dc4aabc8dcdd develop 
 cloud          ${BLOCK_PATH}/cloud          git@github.com:imma/cloud          d419cd67a6bcdc6ae2df1ab05fc3f34c5be666e9 develop 
 imma           ${BLOCK_PATH}/imma           git@github.com:imma/imma           bc06b3a5c6556a70eb40e05f293fb4085bd50f69 develop 
-fogg           ${BLOCK_PATH}/fogg           git@github.com:imma/fogg           d6e31c9c1574afc9a3959b4a4e20cf91f5841e5f develop 
+fogg           ${BLOCK_PATH}/fogg           git@github.com:imma/fogg           052e8b2fd25496af81043063bcd17d2bf3d61c7f develop 
 git            ${BLOCK_PATH}/git            git@github.com:imma/git            a7704f94fb1d787a69e23a8c6558e955b576b034 develop 
 github         ${BLOCK_PATH}/github         git@github.com:imma/github         a2a4e60ccf93559bbd38c063025d779ba4316dd4 develop 
 netdata        ${BLOCK_PATH}/netdata        git@github.com:imma/netdata        7d14284602fbf60d80d6de85f23a26eb9e5112ef develop 
