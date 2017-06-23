@@ -1,0 +1,251 @@
+org := $(shell (cat Blockfile.json 2>/dev/null || echo '{}') | jq -r '.block.org//"imma"')
+block := $(shell basename $(shell cat .block-name 2>/dev/null || echo $(PWD)))
+tag ?= $(block)
+image = block:$(tag)
+version = $(shell git rev-parse --abbrev-ref HEAD)
+ifeq (HEAD,$(version))
+version = $(shell git rev-parse HEAD)
+endif
+
+ifeq (ssh,$(firstword $(MAKECMDGOALS)))
+CONTAINER := $(strip $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+$(eval $(CONTAINER):;@:)
+endif
+
+ifeq (remote,$(firstword $(MAKECMDGOALS)))
+REMOTE := $(strip $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+$(eval $(REMOTE):;@:)
+endif
+
+ifeq (rebuild-one,$(firstword $(MAKECMDGOALS)))
+REBUILD := $(strip $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+$(eval $(REBUILD):;@:)
+endif
+
+REBUILD ?= $(rebuild)
+
+ifeq (scale,$(firstword $(MAKECMDGOALS)))
+SCALE := $(strip $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+$(eval $(SCALE):;@:)
+endif
+
+ifeq (up,$(firstword $(MAKECMDGOALS)))
+SCALE := $(strip $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)))
+$(eval $(SCALE):;@:)
+endif
+
+CONTAINER ?= $(block)_$(block)_1
+ifeq "$(strip $(CONTAINER))" ""
+CONTAINER := $(block)_$(block)_1
+endif
+
+SHELL = bash
+
+ssh_user ?= $(LOGNAME)
+ssh_port ?= 2222
+ssh_remote_user ?= ubuntu
+ssh_remote_home ?= /home/ubuntu
+
+service ?= $(CONTAINER)
+service_ssh_port = $(shell docker inspect $(service) 2>/dev/null | jq -r '.[].NetworkSettings | .Ports["$(ssh_port)/tcp"] // [] | .[].HostPort // 2222')
+service_ssh_ip =$(shell docker inspect $(service) 2>/dev/null | jq -r '.[].NetworkSettings | if (.Ports["$(ssh_port)/tcp"] // [] | .[].HostPort // false) then "172.28.29.250" else .Networks.ubuntu_default.IPAddress end')
+
+ssh_prefix ?= ssh
+ssh_suffix ?= -p $(service_ssh_port) $(ssh_remote_user)@$(service_ssh_ip)
+service_ssh_exec ?= $(ssh_prefix) -A -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $(ssh_suffix)
+
+docker_compose ?= env BLOCK_REGISTRY=$(hub) docker-compose -f compose.json
+
+env_cache = env http_proxy=$(squid) https_proxy=$(squid)
+
+home = ubuntu
+
+make = $(MAKE) cache=$(cache) squid=$(squid) rebuild=$(REBUILD)
+
+hub ?= $(shell aws ecr describe-repositories | jq -r --arg repo block '.repositories | map(select(.repositoryName == $$repo))[].repositoryUri' | cut -d/ -f1)
+registry ?= docker.nih
+cache ?= cache.nih
+squid ?= http://$(cache):3128
+
+ifeq (nc,$(firstword $(MAKECMDGOALS)))
+cache=
+squid=
+endif
+
+print-%:
+	@echo '$*=$($*)'
+	@echo '  origin = $(origin $*)'
+	@echo '  flavor = $(flavor $*)'
+	@echo '   value = $(value  $*)'
+
+nothing:
+	@true
+
+nc:
+	@true
+
+build:
+	if [[ -d .d ]]; then cd .d && docker build --no-cache -t $(registry)/$(image) --build-arg CACHE="$(cache)" $(opt) .; fi
+
+commit:
+	docker commit $(service) $(registry)/$(image) $(opt)
+
+publish:
+	docker push $(registry)/$(image)
+
+recycle:
+	$(make) clean
+	$(make) docker-run
+	$(make) wait-ssh
+
+docker-run:
+	docker run -d -ti -v /data:/data -v /config:/config --name $(service) --network ubuntu_default $(registry)/$(image)
+
+wait-ssh:
+	$(service_ssh_exec) -- true 2>/dev/null || { sleep 1; $(make) wait-ssh; }
+
+up:
+	$(docker_compose) up -d --remove-orphans $(opt) $(shell echo $(SCALE) | runmany 'test -n "$$1" && echo "--scale $$1 "' | tr '_' '=' )
+
+down:
+	$(docker_compose) stop $(opt)
+
+destroy:
+	$(docker_compose) down --remove-orphans $(opt)
+
+ssh:
+	@ssh-keygen -R '[$(service_ssh_ip)]:$(service_ssh_port)' 2>/dev/null >/dev/null
+	$(ssh_prefix) -t -A -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $(ssh_suffix)
+
+remote:
+	$(service_ssh_exec) -- make $(REMOTE)
+
+docker_default = docker-block
+
+aws_default = aws-block
+
+docker:
+	$(make) docker_fr tag="$(shell basename $(PWD))"
+
+docker_fr:
+	$(make) $(docker_default)
+
+aws:
+	chexec $(_$(block)_home) $(make) nc aws-fr
+
+aws-fast:
+	chexec $(_$(block)_home) $(make) nc aws-fast-fr
+
+aws-fr:
+	$(make) ssh_prefix="van vagrant ssh --" ssh_suffix= $(aws_default)
+
+aws-fast-fr:
+	$(make) ssh_prefix="van vagrant ssh --" ssh_suffix= $(aws_default)-fast
+
+docker-block:
+	docker tag $(registry)/block:$(home) $(registry)/$(image)
+	$(make) recycle 
+	env $(make) rebuild=app block-setup block-bootstrap minimize image-update
+
+aws-block:
+	van recycle
+	$(make) block-setup block-bootstrap minimize
+	van reuse $(block)
+
+aws-block-fast:
+	van recycle
+	$(make) block-setup block-bootstrap minimize
+	van export $(block)
+
+block-setup:
+	if [[ -e .git ]]; then jq -n --arg block $(block) --arg org $(org) --arg version $(version) '{ require: [ "\($$org)/\($$block)@\($$version)" ], run: { "\($$block)": {}} }' | $(service_ssh_exec) -- tee Blockfile.json.site \&\& block clone \&\& make cache; fi
+	if [[ ! -e .git ]]; then cat Blockfile.json | $(service_ssh_exec) -- tee $(BLOCK_PATH)/app/Blockfile.json \&\& cd $(BLOCK_PATH)/app \&\& block meta clone; fi
+
+block-bootstrap:
+	$(service_ssh_exec) -- block bootstrap $(REBUILD)
+	$(make) block-finish
+
+block-finish:
+	$(service_ssh_exec) -- make cache
+	$(service_ssh_exec) -- cd work/app \&\& block compile service
+
+minimize:
+	@true
+
+image-update:
+	$(make) commit
+	$(make) build
+	$(make) clean
+
+prune:
+	docker ps -a | grep -v ' Up ' | tail -n +2 | awk '{print $$1}' | gxargs -r -n 1 bash -c 'docker rm -f $$1 2>/dev/null || true' ''
+	docker images --filter "dangling=true" -q --no-trunc | gxargs -r docker rmi
+
+clean:
+	docker rm -f $(service) 2>/dev/null || true
+
+reset-time:
+	docker run -it --rm --privileged --pid=host debian nsenter -t 1 -m -u -n -i date -u $(shell date -u +%m%d%H%M%Y)
+
+download:
+	docker pull $(hub)/$(image)
+	docker tag $(hub)/$(image) $(registry)/$(image)
+
+upload:
+	docker tag $(registry)/$(image) $(hub)/$(image)
+	docker push $(hub)/$(image)
+
+current_dir := $(shell basename $(PWD))
+
+vendor_ami = $(shell aws ami)
+base_ami   = $(shell aws ec2 describe-images --owner self --filter Name=tag:Block,Values='block-base-*' | jq -r '.Images | sort_by(.CreationDate) | .[-1].ImageId')
+ubuntu_ami = $(shell aws ec2 describe-images --owner self --filter Name=tag:Block,Values='block-ubuntu-*' | jq -r '.Images | sort_by(.CreationDate) | .[-1].ImageId')
+golden_ami = $(shell aws ec2 describe-images --owner self --filter Name=tag:Block,Values='block-$(shell basename $(PWD))-*' | jq -r '.Images | sort_by(.CreationDate) | .[-1].ImageId')
+
+base-aws:
+	env FOGG_AMI="$(vendor_ami)" \
+		make base-image
+
+base-image:
+	block require env AWS_TYPE=c4.large \
+		SOURCE_NAME="block:base" \
+		GOLDEN_NAME="block-base" \
+		fogg env chexec "$(_base_home)" \
+			env AWS_AMI=$(FOGG_AMI) make aws
+
+base-ubuntu-aws:
+	env FOGG_AMI=$(base_ami) \
+		make ubuntu-image
+
+ubuntu-aws:
+	env FOGG_AMI=$(ubuntu_ami) \
+		make ubuntu-image
+
+ubuntu-image:
+	block require env AWS_TYPE=c4.large \
+		SOURCE_NAME="block:ubuntu" \
+		GOLDEN_NAME="block-ubuntu" \
+		fogg env chexec "$(_ubuntu_home)" \
+			env AWS_AMI=$(FOGG_AMI) make aws
+
+ubuntu-golden-aws:
+	env FOGG_AMI=$(ubuntu_ami) \
+		make golden-image
+
+golden-aws:
+	env FOGG_AMI=$(golden_ami) \
+		make golden-image
+
+golden-image:
+	block require env AWS_TYPE=c4.large \
+		SOURCE_NAME="block:ubuntu" \
+		GOLDEN_NAME="block-$(current_dir)" \
+		GOLDEN_BLOCK="$(PWD)/Blockfile.json" \
+		fogg env chexec "$(_ubuntu_home)" \
+			env AWS_AMI=$(FOGG_AMI) make aws-fast
+
+ubuntu-docker:
+	block require env \
+		fogg env chexec "$(_ubuntu_home)" \
+			env make docker
+

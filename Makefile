@@ -13,6 +13,8 @@ current_dir := $(patsubst %/,%,$(dir $(mkfile_path)))
 
 docker_host = $(shell aws ecr describe-repositories | jq -r --arg repo block '.repositories | map(select(.repositoryName == $$repo))[].repositoryUri' | cut -d/ -f1 2>/dev/null || true)
 
+_base_home ?= $(HOME)/work/base
+
 all:
 	@true
 

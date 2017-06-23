@@ -258,3 +258,15 @@
 	path = work/digitalocean
 	url = git@github.com:imma/digitalocean
 	branch = develop
+[submodule "work/docker-machine"]
+	path = work/docker-machine
+	url = git@github.com:imma/docker-machine
+	branch = develop
+[submodule "work/etcd"]
+	path = work/etcd
+	url = git@github.com:imma/etcd
+	branch = develop
+[submodule "work/apex"]
+	path = work/apex
+	url = git@github.com:imma/apex
+	branch = develop

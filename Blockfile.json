@@ -2,12 +2,12 @@
   "require": [
     [ "site", "ubuntu-config", "cache", "base", "deploy", "sysadmin" ],
     [ "ruby", "python", "node", "yarn", "java", "bash4", "jqq" ],
-    [ "sshd", "consul-agent", "linkerd", "syslog-ng" ],
-    [ "vagrant", "docker-compose" ],
+    [ "sshd", "consul-agent", "etcd", "linkerd", "syslog-ng" ],
+    [ "vagrant", "docker-compose", "docker-machine" ],
     [ "cloud", "imma", "fogg" ],
     [ "ansible", "github" ],
     [ "monitor", "crypto", "home" ],
-    [ "defn", "junas", "cue", "example" ],
+    [ "defn", "junas", "cue", "example", "nothing" ],
     [ "app" ]
   ]
 }

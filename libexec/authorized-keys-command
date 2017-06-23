@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+function main {
+  if [[ "$#" == 0 ]]; then
+    return 1
+  fi
+
+  export nm_user="$1"; shift
+  set --
+
+  pushd ~ >/dev/null
+  source .bashrc
+  popd >/dev/null
+
+
+  aws iam list-ssh-public-keys --user-name "$nm_user"  \
+    | jq -r '.SSHPublicKeys | map(select(.Status == "Active")) | .[].SSHPublicKeyId' \
+    | runmany 'aws iam get-ssh-public-key --user-name "$nm_user" --ssh-public-key-id "$1" --encoding SSH | jq -r ".SSHPublicKey.SSHPublicKeyBody"'
+}
+
+main "$@"
