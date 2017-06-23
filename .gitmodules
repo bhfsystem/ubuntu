@@ -266,7 +266,3 @@
 	path = work/etcd
 	url = git@github.com:imma/etcd
 	branch = develop
-[submodule "work/apex"]
-	path = work/apex
-	url = git@github.com:imma/apex
-	branch = develop

@@ -32,14 +32,14 @@ sshd           ${BLOCK_PATH}/sshd           git@github.com:imma/sshd           5
 facts          ${BLOCK_PATH}/facts          git@github.com:imma/facts          30880a630197a3d54742e03b172e50d6eb23da97 develop 
 consul         ${BLOCK_PATH}/consul         git@github.com:imma/consul         1156c43a2c1171ce092bcede1e3c656c250a0444 develop 
 consul-agent   ${BLOCK_PATH}/consul-agent   git@github.com:imma/consul-agent   4382e1fc4716417ddc395a13a699bfb7f48e83ce develop 
-etcd           ${BLOCK_PATH}/etcd           git@github.com:imma/etcd           ad828b210a2dc07bd91a8e7d6afe16a6a90e09ec develop 
+etcd           ${BLOCK_PATH}/etcd           git@github.com:imma/etcd           f7e707053bf4a9d6c9a70640ea9cf9817828def8 develop 
 linkerd        ${BLOCK_PATH}/linkerd        git@github.com:imma/linkerd        f43e56f8c6514146c50e67dc5107c39e50277733 develop 
 syslog-ng      ${BLOCK_PATH}/syslog-ng      git@github.com:imma/syslog-ng      4711d92b96e06d4527194b0709396dbba265b574 develop 
 parity         ${BLOCK_PATH}/parity         git@github.com:imma/parity         f4906450dc590c48b73328efe7374f2f3d6e910a develop 
 vagrant        ${BLOCK_PATH}/vagrant        git@github.com:imma/vagrant        e55cfb4c626cedf7ee2e20151670a9b38829d6a6 develop 
 context        ${BLOCK_PATH}/context        git@github.com:imma/context        5704ecc5c5f15ce23975a86612ed7617ce1be527 develop 
 docker-compose ${BLOCK_PATH}/docker-compose git@github.com:imma/docker-compose fac7fe1b73fcc6911f0e4b403bfe830cf19471b1 develop 
-docker-machine ${BLOCK_PATH}/docker-machine git@github.com:imma/docker-machine ad828b210a2dc07bd91a8e7d6afe16a6a90e09ec develop 
+docker-machine ${BLOCK_PATH}/docker-machine git@github.com:imma/docker-machine b891802a4844460a31458ef16892ab71cb895ac4 develop 
 aws            ${BLOCK_PATH}/aws            git@github.com:imma/aws            d13721fe275aa8f52e066e49c044180edfa74cf7 develop 
 awesome        ${BLOCK_PATH}/awesome        git@github.com:imma/awesome        3b5a6c666311a4156932a45ef9d84358a4190e65 develop 
 digitalocean   ${BLOCK_PATH}/digitalocean   git@github.com:imma/digitalocean   f0fd930f439232af0a3c804623a7dc4aabc8dcdd develop 
