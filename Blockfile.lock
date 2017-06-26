@@ -16,7 +16,7 @@ python         ${BLOCK_PATH}/python         git@github.com:imma/python         4
 ansible        ${BLOCK_PATH}/ansible        git@github.com:imma/ansible        19e97047dc6cd96bb8603e69302b75d55e1425a2 develop 
 cache          ${BLOCK_PATH}/cache          git@github.com:imma/cache          1a7930e8dab98bde0fc5c6777f2c0bb9a58255b7 develop 
 inventory      ${BLOCK_PATH}/inventory      git@github.com:imma/inventory      b7e8edce542330782d62d854b5acddf0e634aea9 develop 
-deploy         ${BLOCK_PATH}/deploy         git@github.com:imma/deploy         2c777c3494c775f238c9c8b7a1ca9adfd9480b16 develop 
+deploy         ${BLOCK_PATH}/deploy         git@github.com:imma/deploy         33ab194d739dfc3b65ff4483992b8cebd2ae4fc2 develop 
 htop           ${BLOCK_PATH}/htop           git@github.com:imma/htop           cfce3a3d4a90b91e9103d3ddcf63004c689616d1 develop 
 sysadmin       ${BLOCK_PATH}/sysadmin       git@github.com:imma/sysadmin       aeef00cedc9c02d720cfc26c4f07e9e632f1db23 develop 
 ruby           ${BLOCK_PATH}/ruby           git@github.com:imma/ruby           9d2d18ed75450ecb6915ce5d64a8dfb41a70079b develop 
