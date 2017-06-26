@@ -1,0 +1,15 @@
+---
+- name: Updating ubuntu block
+  command: chdir="{{ansible_env.HOME}}" git pull
+  when: ssh_agent.rc == 0
+
+- name: Get new submodules
+  command: chdir="{{ansible_env.HOME}}" git submodule update --init
+  when: ssh_agent.rc == 0
+
+- name: Sync dependencies
+  command: chdir="{{ansible_env.HOME}}" bin/home make sync
+  when: ssh_agent.rc == 0
+
+- name: Generate .bashrc.cache
+  command: chdir="{{ansible_env.HOME}}" bin/home make cache
