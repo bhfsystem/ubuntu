@@ -45,7 +45,7 @@ docker-save:
 	mv -f /data/cache/box/docker/block-ubuntu.tar.1 /data/cache/box/docker/block-ubuntu.tar
 
 /config/ssh/authorized_keys:
-	git clone git@github.com:imma/imma-config /config 2>/dev/null || true
+	git clone git@github.com:bhfsystem/imma-config /config 2>/dev/null || true
 	rsync -ia .ssh/authorized_keys /config/ssh/
 
 add-modules:

@@ -8,7 +8,7 @@ function host {
     sudo install -d -o ubuntu -g ubuntu /data
     sudo install -d -o ubuntu -g ubuntu /data/cache
     sudo install -d -o ubuntu -g ubuntu /config
-    git clone -b "$(cd "$shome" && git rev-parse --abbrev-ref HEAD)" git@github.com:imma/imma-config /config
+    git clone -b "$(cd "$shome" && git rev-parse --abbrev-ref HEAD)" git@github.com:bhfsystem/imma-config /config
   fi
 
   sudo dpkg --configure -a
