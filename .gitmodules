@@ -114,10 +114,6 @@
 	path = work/linkerd
 	url = git@github.com:bhfsystem/linkerd
 	branch = develop
-[submodule "work/aq"]
-	path = work/aq
-	url = git@github.com:bhfsystem/aq
-	branch = develop
 [submodule "work/inventory"]
 	path = work/inventory
 	url = git@github.com:bhfsystem/inventory
