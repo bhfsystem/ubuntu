@@ -4,7 +4,7 @@ normalize      ${BLOCK_PATH}/normalize      git@github.com:imma/normalize      4
 bash-preexec   ${BLOCK_PATH}/bash-preexec   git@github.com:imma/bash-preexec   4d7ed2552dcb6f37c4718e3ac36768d0008dd5db develop 
 sub            ${BLOCK_PATH}/sub            git@github.com:imma/sub            15e24271e2dadf95a0b7204aabf503db91666c10 develop 
 runmany        ${BLOCK_PATH}/runmany        git@github.com:imma/runmany        dcf830e094bb65d6c13668607aa502db4b7bb2eb develop 
-block          ${BLOCK_PATH}/block          git@github.com:imma/block          7eed1df6c02327213af7d798127b01dce68ebbb5 develop 
+block          ${BLOCK_PATH}/block          git@github.com:imma/block          944ef8b758b6f4d5727557b26b44b1999d5bf1b2 develop 
 ubuntu-config  ${BLOCK_PATH}/ubuntu-config  git@github.com:imma/ubuntu-config  0530dab0ed5d8977478c97658772b5a7a5671d43 develop 
 homebrew       ${BLOCK_PATH}/homebrew       git@github.com:imma/homebrew       a9548200d97260cd1aa49b28ae58d82efdc6dc7b develop 
 java           ${BLOCK_PATH}/java           git@github.com:imma/java           0a9058e9d27edc93b145cdd26571e453d1412e2e develop 
